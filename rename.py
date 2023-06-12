@@ -95,8 +95,8 @@ def main():
     if args["directory"] is None:
         args["directory"] = getcwd()
     
-    if args["target-dir"] is None:
-        args["target-dir"] = getcwd()
+    if args["target_dir"] is None:
+        args["target_dir"] = getcwd()
 
 
     set_mapping(load_json_file(episodes_ref_file), load_json_file(chapters_ref_file))
@@ -115,18 +115,18 @@ def main():
 
         arc_name = new_episode_name[0]
         
-        if args["directory"] != args["target-dir"]:
-            all_subdirs = [d for d in os.listdir(args["target-dir"]) if os.path.isdir(d)]
+        if args["directory"] != args["target_dir"]:
+            all_subdirs = [d for d in os.listdir(args["target_dir"]) if os.path.isdir(d)]
             count = len([i for i in all_subdirs if i.contains(arc_name)])
             
             if count > 1:
-                raise ValueError("Found multiple matches for arc name \"{}\", in the directory \"{}\", subdirs \"{}\"".format(arc_name, args["target-dir"], all_subdirs))
+                raise ValueError("Found multiple matches for arc name \"{}\", in the directory \"{}\", subdirs \"{}\"".format(arc_name, args["target_dir"], all_subdirs))
             elif count == 0:
-                raise ValueError("Unable to find directory for arc name \"{}\", in the directory \"{}\", subdirs \"{}\"".format(arc_name, args["target-dir"], all_subdirs))
+                raise ValueError("Unable to find directory for arc name \"{}\", in the directory \"{}\", subdirs \"{}\"".format(arc_name, args["target_dir"], all_subdirs))
 
             for subdir in all_subdirs:
                 if arc_name in subdir:
-                    new_episode_name[1] = os.path.join(args["target-dir"], matched_dir, new_episode_name[1])
+                    new_episode_name[1] = os.path.join(args["target_dir"], matched_dir, new_episode_name[1])
                     break
 
 
