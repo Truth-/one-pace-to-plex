@@ -78,7 +78,7 @@ def generate_new_name_for_episode(original_file_name):
 
         episode_number = chapter_mapping.get(chapters)
         if ((episode_number is None) or (episode_number == "")):
-            raise ValueError("\"{}\" Episode not found in file {}".format(chapters, chapters_ref_file))
+            raise ValueError("\"{}\" Episode not found in file {}".format(original_file_name, chapters_ref_file))
 
         return ["Dressrosa", "One.Piece.{}.{}.mkv".format(episode_number, resolution)]
 
