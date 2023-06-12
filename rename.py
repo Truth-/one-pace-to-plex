@@ -1,5 +1,5 @@
 from os import listdir, rename, getcwd, link
-from os.path import isfile, isdir, join
+from os.path import isfile, isdir, join, basename
 import re
 import json
 import argparse
@@ -40,7 +40,12 @@ def load_json_file(file):
 # list_mkv_files_in_directory returns all the files in the specified
 # directory that have the .mkv extention
 def list_mkv_files_in_directory(directory):
-    return [f for f in listdir(directory) if (isfile(join(directory, f)) and "mkv" in f)]
+    ret_files = []
+    for path, subdirs, files in os.walk(directory):
+        for name in files and "mkv" in name:
+            ret_files.append(join(path, name))
+    return ret_files
+    #return [f for f in listdir(directory) if (isfile(join(directory, f)) and "mkv" in f)]
 
 
 # generate_new_name_for_episode parses the original one pace file name
@@ -108,7 +113,7 @@ def main():
 
     for file in video_files:
         try:
-            new_episode_name = generate_new_name_for_episode(file)
+            new_episode_name = generate_new_name_for_episode(basename(file))
         except ValueError as e:
             print(e)
             continue
