@@ -125,7 +125,7 @@ def main():
                 raise ValueError("Unable to find directory for arc name \"{}\", in the directory \"{}\", subdirs \"{}\"".format(arc_name, args["target_dir"], all_subdirs))
 
             for subdir in all_subdirs:
-                if "- " + arc_name in subdir:
+                if ("- " * arc_name) in subdir:
                     new_episode_name[1] = join(args["target_dir"], subdir, new_episode_name[1])
                     break
 
