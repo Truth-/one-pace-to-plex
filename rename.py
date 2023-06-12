@@ -1,5 +1,5 @@
 from os import listdir, rename, getcwd, link
-from os.path import isfile, join
+from os.path import isfile, isdir, join
 import re
 import json
 import argparse
@@ -116,7 +116,7 @@ def main():
         arc_name = new_episode_name[0]
         
         if args["directory"] != args["target_dir"]:
-            all_subdirs = [d for d in os.listdir(args["target_dir"]) if os.path.isdir(d)]
+            all_subdirs = [d for d in listdir(args["target_dir"]) if isdir(d)]
             count = len([i for i in all_subdirs if i.contains(arc_name)])
             
             if count > 1:
@@ -126,7 +126,7 @@ def main():
 
             for subdir in all_subdirs:
                 if arc_name in subdir:
-                    new_episode_name[1] = os.path.join(args["target_dir"], matched_dir, new_episode_name[1])
+                    new_episode_name[1] = join(args["target_dir"], matched_dir, new_episode_name[1])
                     break
 
 
