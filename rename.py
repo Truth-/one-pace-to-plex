@@ -126,7 +126,7 @@ def main():
 
             for subdir in all_subdirs:
                 if arc_name in subdir:
-                    new_episode_name[1] = join(args["target_dir"], matched_dir, new_episode_name[1])
+                    new_episode_name[1] = join(args["target_dir"], subdir, new_episode_name[1])
                     break
 
 
