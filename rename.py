@@ -116,7 +116,7 @@ def main():
         arc_name = new_episode_name[0]
         
         if args["directory"] != args["target_dir"]:
-            all_subdirs = [d for d in listdir(args["target_dir"]) if isdir(d)]
+            all_subdirs = [d for d in listdir(args["target_dir"]) if isdir(join(args["target_dir"], d))]
             count = len([i for i in all_subdirs if i.contains(arc_name)])
             
             if count > 1:
