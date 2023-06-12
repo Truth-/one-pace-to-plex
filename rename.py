@@ -42,8 +42,9 @@ def load_json_file(file):
 def list_mkv_files_in_directory(directory):
     ret_files = []
     for path, subdirs, files in walk(directory):
-        for name in files and "mkv" in name:
-            ret_files.append(join(path, name))
+        for name in files:
+            if "mkv" in name:
+                ret_files.append(join(path, name))
     return ret_files
     #return [f for f in listdir(directory) if (isfile(join(directory, f)) and "mkv" in f)]
 
