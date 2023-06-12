@@ -117,7 +117,7 @@ def main():
         
         if args["directory"] != args["target_dir"]:
             all_subdirs = [d for d in listdir(args["target_dir"]) if isdir(join(args["target_dir"], d))]
-            count = len([i for i in all_subdirs if i.contains(arc_name)])
+            count = len([i for i in all_subdirs if arc_name in i])
             
             if count > 1:
                 raise ValueError("Found multiple matches for arc name \"{}\", in the directory \"{}\", subdirs \"{}\"".format(arc_name, args["target_dir"], all_subdirs))
