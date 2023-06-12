@@ -1,4 +1,4 @@
-from os import listdir, rename, getcwd
+from os import listdir, rename, getcwd, link
 from os.path import isfile, join
 import re
 import json
@@ -62,7 +62,7 @@ def generate_new_name_for_episode(original_file_name):
         if ((episode_number is None) or (episode_number == "")):
             raise ValueError("Episode {} not found in \"{}\" Arc in file {}".format(arc_ep_num, arc_name, episodes_ref_file))
 
-        return "One.Piece.{}.{}.mkv".format(episode_number, resolution)
+        return [arc_name, "One.Piece.{}.{}.mkv".format(episode_number, resolution)]
 
     reg = re.search(r'\[One Pace\]\ Chapter\ (\d+-\d+) \[(\d+p)\].*\.mkv', original_file_name)
 
@@ -74,7 +74,7 @@ def generate_new_name_for_episode(original_file_name):
         if ((episode_number is None) or (episode_number == "")):
             raise ValueError("\"{}\" Episode not found in file {}".format(chapters, chapters_ref_file))
 
-        return "One.Piece.{}.{}.mkv".format(episode_number, resolution)
+        return ["Dressrosa", "One.Piece.{}.{}.mkv".format(episode_number, resolution)]
 
     raise ValueError("File \"{}\" didn't match the regexes".format(original_file_name))
 
@@ -84,6 +84,8 @@ def main():
     parser.add_argument("-rf", "--reference-file", nargs='?', help="Path to the episodes reference file", default="episodes-reference.json")
     parser.add_argument("-crf", "--chapter-reference-file", nargs='?', help="Path to the chapters reference file", default="chapters-reference.json")
     parser.add_argument("-d", "--directory", nargs='?', help="Data directory (aka path where the mkv files are)", default=None)
+    parser.add_argument("-t", "--target-dir", nargs='?', help="Target directory (aka path where the mkv files will be placed)", default=None)
+    parser.add_argument("--hardlink", action="store_true", help="Hardlink files to new directory instead of moving")
     parser.add_argument("--dry-run", action="store_true", help="If this flag is passed, the output will only show how the files would be renamed")
     args = vars(parser.parse_args())
 
@@ -92,6 +94,10 @@ def main():
 
     if args["directory"] is None:
         args["directory"] = getcwd()
+    
+    if args["target-dir"] is None:
+        args["target-dir"] = getcwd()
+
 
     set_mapping(load_json_file(episodes_ref_file), load_json_file(chapters_ref_file))
 
@@ -107,11 +113,31 @@ def main():
             print(e)
             continue
 
+        arc_name = new_episode_name[0]
+        
+        if args["directory"] != args["target-dir"]:
+            all_subdirs = [d for d in os.listdir(args["target-dir"]) if os.path.isdir(d)]
+            count = len([i for i in all_subdirs if i.contains(arc_name)])
+            
+            if count > 1:
+                raise ValueError("Found multiple matches for arc name \"{}\", in the directory \"{}\", subdirs \"{}\"".format(arc_name, args["target-dir"], all_subdirs))
+            elif count == 0:
+                raise ValueError("Unable to find directory for arc name \"{}\", in the directory \"{}\", subdirs \"{}\"".format(arc_name, args["target-dir"], all_subdirs))
+
+            for subdir in all_subdirs:
+                if arc_name in subdir:
+                    new_episode_name[1] = os.path.join(args["target-dir"], matched_dir, new_episode_name[1])
+                    break
+
+
         if args["dry_run"]:
-            print("DRYRUN: \"{}\" -> \"{}\"".format(file, new_episode_name))
+            print("DRYRUN: \"{}\" -> \"{}\"".format(file, new_episode_name[1]))
             continue
         
-        rename(file, new_episode_name)
+        if args.["hardlink"]:
+            link(file, new_episode_name[1])
+        else:
+            rename(file, new_episode_name[1])
 
 if __name__ == "__main__":
     main()
