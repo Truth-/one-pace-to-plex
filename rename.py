@@ -1,4 +1,4 @@
-from os import listdir, rename, getcwd, link
+from os import listdir, rename, getcwd, link, walk
 from os.path import isfile, isdir, join, basename
 import re
 import json
@@ -41,7 +41,7 @@ def load_json_file(file):
 # directory that have the .mkv extention
 def list_mkv_files_in_directory(directory):
     ret_files = []
-    for path, subdirs, files in os.walk(directory):
+    for path, subdirs, files in walk(directory):
         for name in files and "mkv" in name:
             ret_files.append(join(path, name))
     return ret_files
