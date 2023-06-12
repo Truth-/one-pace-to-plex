@@ -134,7 +134,7 @@ def main():
             print("DRYRUN: \"{}\" -> \"{}\"".format(file, new_episode_name[1]))
             continue
         
-        if args.["hardlink"]:
+        if args["hardlink"]:
             link(file, new_episode_name[1])
         else:
             rename(file, new_episode_name[1])
