@@ -90,10 +90,13 @@ def generate_new_name_for_episode(original_file_name):
     reg = re.search(r'\[One Pace\]\[.*\] (.*?) \[(\d+p)\].*\.mkv', original_file_name)
 
     if (reg is not None):
-        arc_name = reg.group(1)
+        episode_name = reg.group(1)
         resolution = reg.group(2)
-
-        episode_number = coverpage_mapping.get(arc_name)
+        
+        coverpage = coverpage_mapping.get(episode_name)
+        
+        arc_name = coverpage.get("Arc")
+        episode_number = coverpage.get("Episodes")
         if ((episode_number is None) or (episode_number == "")):
             raise ValueError("\"{}\" Episode not found in file {}".format(original_file_name, coverpage_ref_file))
 
@@ -153,7 +156,7 @@ def main():
                 full_path = join(args["target_dir"], subdir, new_episode_name[1])
                 break
 
-        if full_path is None or full_path == "":
+        if (full_path is None) or (full_path == ""):
             raise ValueError("Unable to create full path for episode {} in arc {}".format(episode_name, new_episode_name[0]))
 
         if args["dry_run"]:
