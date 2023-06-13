@@ -31,12 +31,12 @@ def set_mapping(episode_mapping_value, coverpage_mapping_value):
 def load_json_file(file):
     with open(file) as f:
         try:
-            json_obj = json.load(f)
+            return json.load(f)
         except ValueError as e:
             print("Failed to load the file \"{}\": {}".format(file, e))
             exit
 
-    return json_obj
+    return None
 
 
 # list_mkv_files_in_directory returns all the files in the specified
