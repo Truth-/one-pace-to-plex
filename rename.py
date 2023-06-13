@@ -96,9 +96,16 @@ def generate_new_name_for_episode(original_file_name):
         coverpage = coverpage_mapping.get(episode_name)
         
         arc_name = coverpage.get("Arc")
-        episode_number = coverpage.get("Episodes")
+        arc_ep_num = coverpage.get("Episodes")
+        
+        arc = episode_mapping.get(arc_name)
+        if (arc is None):
+            raise ValueError("\"{}\" Arc not found in file {}".format(arc_name, episodes_ref_file))
+
+        episode_number = arc.get(arc_ep_num)
         if ((episode_number is None) or (episode_number == "")):
-            raise ValueError("\"{}\" Episode not found in file {}".format(original_file_name, coverpage_ref_file))
+            raise ValueError("Episode {} not found in \"{}\" Arc in file {}".format(arc_ep_num, arc_name, episodes_ref_file))
+
 
         return [arc_name, "One.Piece.{}.{}.mkv".format(episode_number, resolution)]
 
