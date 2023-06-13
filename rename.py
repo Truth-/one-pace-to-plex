@@ -134,14 +134,17 @@ def main():
         target_basename = basename(args["target_dir"])
         if ONE_PIECE_DIR_NAME != target_basename:
             sys.exit("The directory \"{}\" to be clear is not a valid One Piece directory, should be named {}".format(args["target_dir"], ONE_PIECE_DIR_NAME))
-
-        shutil.rmtree(args["target_dir"])
-        mkdir(args["target_dir"])
+        
+        print("Removing: {}".format(args["target_dir"]))
+        #shutil.rmtree(args["target_dir"])
+        #mkdir(args["target_dir"])
         arc_list = load_json_file(args["arc-file"])
         for arc in arc_list:
             folder_dir = join(args["target_dir"], arc
+            print("Making: {}".format(folder_dir))
             mkdir(folder_dir)
-            link(args["map-file"], join(folder_dir, basename(args["map-file"])))
+            #link(args["map-file"], join(folder_dir, basename(args["map-file"])))
+            print("Linking: {} to {}".format(args["map-file"], join(folder_dir, basename(args["map-file"])))
 
     set_ref_file_vars(args["reference_file"], args["coverpage_reference_file"])
 
