@@ -3,6 +3,7 @@ from os.path import isfile, isdir, join, basename
 import re
 import json
 import argparse
+import shutil
 
 ONE_PIECE_DIR_NAME = "One Piece [tvdb4-81797]"
 
