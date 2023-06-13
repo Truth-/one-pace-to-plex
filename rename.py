@@ -140,11 +140,11 @@ def main():
         #mkdir(args["target_dir"])
         arc_list = load_json_file(args["arc-file"])
         for arc in arc_list:
-            folder_dir = join(args["target_dir"], arc
+            folder_dir = join(args["target_dir"], arc)
             print("Making: {}".format(folder_dir))
             mkdir(folder_dir)
             #link(args["map-file"], join(folder_dir, basename(args["map-file"])))
-            print("Linking: {} to {}".format(args["map-file"], join(folder_dir, basename(args["map-file"])))
+            print("Linking: {} to {}".format(args["map-file"], join(folder_dir, basename(args["map-file"]))))
 
     set_ref_file_vars(args["reference_file"], args["coverpage_reference_file"])
 
