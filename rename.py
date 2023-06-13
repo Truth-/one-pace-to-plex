@@ -145,7 +145,7 @@ def main():
             print("Making: {}".format(folder_dir))
             mkdir(folder_dir)
             print("Linking: {} to {}".format(args["map_file"], join(folder_dir, basename(args["map_file"]))))
-            link(args["map-file"], join(folder_dir, basename(args["map-file"])))
+            link(args["map-file"], join(folder_dir, basename(args["map_file"])))
 
     set_ref_file_vars(args["reference_file"], args["coverpage_reference_file"])
 
