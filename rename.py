@@ -1,8 +1,10 @@
-from os import listdir, rename, getcwd, link, walk
+from os import listdir, rename, getcwd, link, walk, mkdir
 from os.path import isfile, isdir, join, basename
 import re
 import json
 import argparse
+
+ONE_PIECE_DIR_NAME = "One Piece [tvdb4-81797]"
 
 args = None
 
@@ -29,12 +31,12 @@ def set_mapping(episode_mapping_value, coverpage_mapping_value):
 def load_json_file(file):
     with open(file) as f:
         try:
-            episode_mapping = json.load(f)
+            json_obj = json.load(f)
         except ValueError as e:
             print("Failed to load the file \"{}\": {}".format(file, e))
             exit
 
-    return episode_mapping
+    return json_obj
 
 
 # list_mkv_files_in_directory returns all the files in the specified
@@ -114,6 +116,8 @@ def generate_new_name_for_episode(original_file_name):
 
 def main():
     parser = argparse.ArgumentParser(description='Rename One Pace files to a format Plex understands')
+    parser.add_argument("-af", "--arc-file", nargs='?', help="Path to the file containing the different arcs", default="arc-directories.json")
+    parser.add_argument("-mf", "--map-file", nargs='?', help="Path to the file containing the tvdb4 mapping", default="tvdb4.mapping")
     parser.add_argument("-rf", "--reference-file", nargs='?', help="Path to the episodes reference file", default="episodes-reference.json")
     parser.add_argument("-crf", "--coverpage-reference-file", nargs='?', help="Path to the cover page reference file", default="coverpage-reference.json")
     parser.add_argument("-d", "--directory", nargs='?', help="Data directory (aka path where the mkv files are)", default=None)
@@ -123,8 +127,21 @@ def main():
     parser.add_argument("--clear", action="store_true", help="If this flag is passed, the target dir will be cleared and rebuilt from scratch")
     args = vars(parser.parse_args())
     
-    if args["clear"] and args["target_dir"] is None:
-        sys.exit("--clear must be used in combination with --target-dir")
+    if args["clear"]:
+        if args["target_dir"] is None:
+            sys.exit("--clear must be used in combination with --target-dir")
+        
+        target_basename = basename(args["target_dir"])
+        if ONE_PIECE_DIR_NAME != target_basename:
+            sys.exit("The directory \"{}\" to be clear is not a valid One Piece directory, should be named {}".format(args["target_dir"], ONE_PIECE_DIR_NAME))
+
+        shutil.rmtree(args["target_dir"])
+        mkdir(args["target_dir"])
+        arc_list = load_json_file(args["arc-file"])
+        for arc in arc_list:
+            folder_dir = join(args["target_dir"], arc
+            mkdir(folder_dir)
+            link(args["map-file"], join(folder_dir, basename(args["map-file"])))
 
     set_ref_file_vars(args["reference_file"], args["coverpage_reference_file"])
 
