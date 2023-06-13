@@ -120,8 +120,11 @@ def main():
     parser.add_argument("-t", "--target-dir", nargs='?', help="Target directory (aka path where the mkv files will be placed)", default=None)
     parser.add_argument("--hardlink", action="store_true", help="Hardlink files to new directory instead of moving")
     parser.add_argument("--dry-run", action="store_true", help="If this flag is passed, the output will only show how the files would be renamed")
+    parser.add_argument("--clear", action="store_true", help="If this flag is passed, the target dir will be cleared and rebuilt from scratch")
     args = vars(parser.parse_args())
-
+    
+    if args["clear"] and args["target_dir"] is None:
+        sys.exit("--clear must be used in combination with --target-dir")
 
     set_ref_file_vars(args["reference_file"], args["coverpage_reference_file"])
 
