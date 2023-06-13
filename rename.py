@@ -6,24 +6,20 @@ import argparse
 
 args = None
 
-# set_ref_file_vars sets the chapter, episode, and cover page reference files as global variables
+# set_ref_file_vars sets the episode and cover page reference files as global variables
 # because they're often referenced in the script
-def set_ref_file_vars(episodes_ref_file_path, chapters_ref_file_path, coverpage_ref_file_path):
+def set_ref_file_vars(episodes_ref_file_path, coverpage_ref_file_path):
     global episodes_ref_file
     episodes_ref_file = episodes_ref_file_path
-    global chapters_ref_file
-    chapters_ref_file = chapters_ref_file_path
     global coverpage_ref_file
     coverpage_ref_file = coverpage_ref_file_path
 
 
 # set_mapping sets mapping of One Pace episodes as global variables
 # because they're often referenced in the script
-def set_mapping(episode_mapping_value, chapter_mapping_value, coverpage_mapping_value):
+def set_mapping(episode_mapping_value, coverpage_mapping_value):
     global episode_mapping
     episode_mapping = episode_mapping_value
-    global chapter_mapping
-    chapter_mapping = chapter_mapping_value
     global coverpage_mapping
     coverpage_mapping = coverpage_mapping_value
 
@@ -77,10 +73,15 @@ def generate_new_name_for_episode(original_file_name):
     reg = re.search(r'\[One Pace\]\ Chapter\ (\d+-\d+) \[(\d+p)\].*\.mkv', original_file_name)
 
     if (reg is not None):
+        arc_name = "Dressrosa"
         chapters = reg.group(1)
         resolution = reg.group(2)
 
-        episode_number = chapter_mapping.get(chapters)
+        arc = episode_mapping.get(arc_name)
+        if (arc is None):
+            raise ValueError("\"{}\" Arc not found in file {}".format(arc_name, episodes_ref_file))
+
+        episode_number = arc.get(chapters)
         if ((episode_number is None) or (episode_number == "")):
             raise ValueError("\"{}\" Episode not found in file {}".format(original_file_name, chapters_ref_file))
 
@@ -104,8 +105,7 @@ def generate_new_name_for_episode(original_file_name):
 def main():
     parser = argparse.ArgumentParser(description='Rename One Pace files to a format Plex understands')
     parser.add_argument("-rf", "--reference-file", nargs='?', help="Path to the episodes reference file", default="episodes-reference.json")
-    parser.add_argument("-crf", "--chapter-reference-file", nargs='?', help="Path to the chapters reference file", default="chapters-reference.json")
-    parser.add_argument("-cprf", "--coverpage-reference-file", nargs='?', help="Path to the cover page reference file", default="coverpage-reference.json")
+    parser.add_argument("-crf", "--coverpage-reference-file", nargs='?', help="Path to the cover page reference file", default="coverpage-reference.json")
     parser.add_argument("-d", "--directory", nargs='?', help="Data directory (aka path where the mkv files are)", default=None)
     parser.add_argument("-t", "--target-dir", nargs='?', help="Target directory (aka path where the mkv files will be placed)", default=None)
     parser.add_argument("--hardlink", action="store_true", help="Hardlink files to new directory instead of moving")
@@ -113,7 +113,7 @@ def main():
     args = vars(parser.parse_args())
 
 
-    set_ref_file_vars(args["reference_file"], args["chapter_reference_file"], args["coverpage_reference_file"])
+    set_ref_file_vars(args["reference_file"], args["coverpage_reference_file"])
 
     if args["directory"] is None:
         args["directory"] = getcwd()
@@ -122,7 +122,7 @@ def main():
         args["target_dir"] = getcwd()
 
 
-    set_mapping(load_json_file(episodes_ref_file), load_json_file(chapters_ref_file), load_json_file(coverpage_ref_file))
+    set_mapping(load_json_file(episodes_ref_file), load_json_file(coverpage_ref_file))
 
     video_files = list_mkv_files_in_directory(args["directory"])
 
