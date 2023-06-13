@@ -184,7 +184,8 @@ def main():
 
         for subdir in all_subdirs:
             if arc_name in subdir:
-                full_path = join(args["target_dir"], subdir, new_episode_name[1])
+                test_name = basename(file) + " - " new_episode_name[1]
+                full_path = join(args["target_dir"], subdir, test_name) #new_episode_name[1])
                 break
 
         if (full_path is None) or (full_path == ""):
