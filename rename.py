@@ -1,4 +1,4 @@
-from os import listdir, rename, getcwd, link, walk, mkdir
+from os import listdir, rename, getcwd, link, walk, mkdir, chown
 from os.path import isfile, isdir, join, basename
 import re
 import json
@@ -146,6 +146,7 @@ def main():
             mkdir(folder_dir)
             print("Copying: {} to {}".format(args["map_file"], join(folder_dir, basename(args["map_file"]))))
             shutil.copy(join(getcwd(), args["map_file"]), join(folder_dir, basename(args["map_file"])))
+            chown(join(folder_dir, basename(args["map_file"])), 568, 1000)
 
     set_ref_file_vars(args["reference_file"], args["coverpage_reference_file"])
 
