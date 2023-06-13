@@ -136,31 +136,34 @@ def main():
             print(e)
             continue
 
+        full_path = None
         arc_name = "- " + new_episode_name[0]
+        episode_name = new_episode_name[1]
         
-        if args["directory"] != args["target_dir"]:
-            all_subdirs = [d for d in listdir(args["target_dir"]) if isdir(join(args["target_dir"], d))]
-            count = len([i for i in all_subdirs if arc_name in i])
-            
-            if count > 1:
-                raise ValueError("Found multiple matches for arc name \"{}\", in the directory \"{}\", subdirs \"{}\"".format(arc_name, args["target_dir"], all_subdirs))
-            elif count == 0:
-                raise ValueError("Unable to find directory for arc name \"{}\", in the directory \"{}\", subdirs \"{}\"".format(arc_name, args["target_dir"], all_subdirs))
+        all_subdirs = [d for d in listdir(args["target_dir"]) if isdir(join(args["target_dir"], d))]
+        count = len([i for i in all_subdirs if arc_name in i])
 
-            for subdir in all_subdirs:
-                if arc_name in subdir:
-                    new_episode_name[1] = join(args["target_dir"], subdir, new_episode_name[1])
-                    break
+        if count > 1:
+            raise ValueError("Found multiple matches for arc name \"{}\", in the directory \"{}\", subdirs \"{}\"".format(arc_name, args["target_dir"], all_subdirs))
+        elif count == 0:
+            raise ValueError("Unable to find directory for arc name \"{}\", in the directory \"{}\", subdirs \"{}\"".format(arc_name, args["target_dir"], all_subdirs))
 
+        for subdir in all_subdirs:
+            if arc_name in subdir:
+                full_path = join(args["target_dir"], subdir, new_episode_name[1])
+                break
+
+        if full_path is None or full_path == "":
+            raise ValueError("Unable to create full path for episode {} in arc {}".format(episode_name, new_episode_name[0]))
 
         if args["dry_run"]:
-            print("DRYRUN: \"{}\" -> \"{}\"".format(file, new_episode_name[1]))
+            print("DRYRUN: \"{}\" -> \"{}\"".format(file, full_path))
             continue
         
         if args["hardlink"]:
-            link(file, new_episode_name[1])
+            link(file, full_path)
         else:
-            rename(file, new_episode_name[1])
+            rename(file, full_path)
 
 if __name__ == "__main__":
     main()
