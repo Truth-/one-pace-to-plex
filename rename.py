@@ -9,20 +9,24 @@ ONE_PIECE_DIR_NAME = "One Piece [tvdb4-81797]"
 
 args = None
 
-# set_ref_file_vars sets the episode and cover page reference files as global variables
+# set_ref_file_vars sets the episode, chapter, and cover page reference files as global variables
 # because they're often referenced in the script
-def set_ref_file_vars(episodes_ref_file_path, coverpage_ref_file_path):
+def set_ref_file_vars(episodes_ref_file_path, chapters_ref_file_path, coverpage_ref_file_path):
     global episodes_ref_file
     episodes_ref_file = episodes_ref_file_path
+    global chapters_ref_file
+    chapters_ref_file = chapters_ref_file_path
     global coverpage_ref_file
     coverpage_ref_file = coverpage_ref_file_path
 
 
-# set_mapping sets mapping of One Pace episodes as global variables
+# set_mapping sets mapping of One Pace episodes, chapters, and cover pages as global variables
 # because they're often referenced in the script
-def set_mapping(episode_mapping_value, coverpage_mapping_value):
+def set_mapping(episode_mapping_value, chapter_mapping_value, coverpage_mapping_value):
     global episode_mapping
     episode_mapping = episode_mapping_value
+    global chapter_mapping
+    chapter_mapping = chapter_mapping_value
     global coverpage_mapping
     coverpage_mapping = coverpage_mapping_value
 
@@ -80,13 +84,17 @@ def generate_new_name_for_episode(original_file_name):
         chapters = reg.group(1)
         resolution = reg.group(2)
 
-        arc = episode_mapping.get(arc_name)
+        arc_ep_num = chapter_mapping.get(chapters)
+        if (arc_ep_num is None):
+            raise ValueError("\"{}\" Arc episode number not found in file {}".format(arc_ep_num, chapters_ref_file))
+
+        arc = chapter_mapping.get(arc_name)
         if (arc is None):
             raise ValueError("\"{}\" Arc not found in file {}".format(arc_name, episodes_ref_file))
 
-        episode_number = arc.get(chapters)
+        episode_number = arc.get(arc_ep_num)
         if ((episode_number is None) or (episode_number == "")):
-            raise ValueError("\"{}\" Episode not found in file {}".format(original_file_name, chapters_ref_file))
+            raise ValueError("Episode {} not found in \"{}\" Arc in file {}".format(arc_ep_num, arc_name, episodes_ref_file))
 
         return ["Dressrosa", "One.Piece.{}.{}.mkv".format(episode_number, resolution)]
     
@@ -120,7 +128,8 @@ def main():
     parser.add_argument("-af", "--arc-file", nargs='?', help="Path to the file containing the different arcs", default="arc-directories.json")
     parser.add_argument("-mf", "--map-file", nargs='?', help="Path to the file containing the tvdb4 mapping", default="tvdb4.mapping")
     parser.add_argument("-rf", "--reference-file", nargs='?', help="Path to the episodes reference file", default="episodes-reference.json")
-    parser.add_argument("-crf", "--coverpage-reference-file", nargs='?', help="Path to the cover page reference file", default="coverpage-reference.json")
+    parser.add_argument("-crf", "--chapter-reference-file", nargs='?', help="Path to the chapters reference file", default="chapters-reference.json")
+    parser.add_argument("-cprf", "--coverpage-reference-file", nargs='?', help="Path to the cover page reference file", default="coverpage-reference.json")
     parser.add_argument("-d", "--directory", nargs='?', help="Data directory (aka path where the mkv files are)", default=None)
     parser.add_argument("-t", "--target-dir", nargs='?', help="Target directory (aka path where the mkv files will be placed)", default=None)
     parser.add_argument("--hardlink", action="store_true", help="Hardlink files to new directory instead of moving")
@@ -148,7 +157,7 @@ def main():
             shutil.copy(join(getcwd(), args["map_file"]), join(folder_dir, basename(args["map_file"])))
             chown(join(folder_dir, basename(args["map_file"])), 568, 1000)
 
-    set_ref_file_vars(args["reference_file"], args["coverpage_reference_file"])
+    set_ref_file_vars(args["reference_file"], args["chapter_reference_file"], args["coverpage_reference_file"])
 
     if args["directory"] is None:
         args["directory"] = getcwd()
