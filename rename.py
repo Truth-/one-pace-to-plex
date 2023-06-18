@@ -97,7 +97,7 @@ def generate_new_name_for_episode(original_file_name):
         if (arc_ep_num is None):
             raise ValueError("\"{}\" Arc episode number not found in file {}".format(arc_ep_num, chapters_ref_file))
 
-        arc = chapter_mapping.get(arc_name)
+        arc = episode_mapping.get(arc_name)
         if (arc is None):
             raise ValueError("\"{}\" Arc not found in file {}".format(arc_name, episodes_ref_file))
 
