@@ -141,6 +141,7 @@ def main():
     parser.add_argument("-cprf", "--coverpage-reference-file", nargs='?', help="Path to the cover page reference file", default="coverpage-reference.json")
     parser.add_argument("-d", "--directory", nargs='?', help="Data directory (aka path where the mkv files are)", default=None)
     parser.add_argument("-t", "--target-dir", nargs='?', help="Target directory (aka path where the mkv files will be placed)", default=None)
+    parser.add_argument("-i", "--image-dir", nargs='?', help="Image directory (aka path where the season image files are located)", default="arc-images")
     parser.add_argument("--hardlink", action="store_true", help="Hardlink files to new directory instead of moving")
     parser.add_argument("--dry-run", action="store_true", help="If this flag is passed, the output will only show how the files would be renamed")
     parser.add_argument("-r", "--recurse", action="store_true", help="If this flag is passed, the script will search for mkv files in subdirectories as well")
@@ -159,13 +160,25 @@ def main():
         shutil.rmtree(args["target_dir"])
         mkdir(args["target_dir"])
         arc_list = load_json_file(args["arc_file"])
+        season_counter = 0
         for arc in arc_list:
             folder_dir = join(args["target_dir"], arc)
             #print("Making: {}".format(folder_dir))
             mkdir(folder_dir)
             #print("Copying: {} to {}".format(args["map_file"], join(folder_dir, basename(args["map_file"]))))
-            shutil.copy(join(getcwd(), args["map_file"]), join(folder_dir, basename(args["map_file"])))
-            chown(join(folder_dir, basename(args["map_file"])), 568, 1000)
+            target_file = join(folder_dir, basename(args["map_file"]))
+            shutil.copy(join(getcwd(), args["map_file"]), target_file)
+            chown(target_file, 568, 1000)
+
+            if season_counter == 0:
+                target_file = "Specials.PNG"
+            else:
+                target_file = f"Season{season_counter:02d}.PNG"
+
+            target_fullpath = join(folder_dir, target_file)
+            shutil.copy(join(getcwd(), args["image_dir"], target_file), target_fullpath)
+            chown(target_fullpath, 568, 1000)
+            season_counter += 1
 
     set_ref_file_vars(args["reference_file"], args["chapter_reference_file"], args["coverpage_reference_file"])
 
