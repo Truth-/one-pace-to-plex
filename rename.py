@@ -1,5 +1,6 @@
-from os import listdir, rename, getcwd, walk
-from os.path import isfile, join, abspath, basename, dirname, relpath, isdir
+from os import listdir, rename, getcwd, walk, link
+from os.path import isfile, join, abspath, basename, relpath, isdir
+import sys
 import re
 import json
 import argparse
