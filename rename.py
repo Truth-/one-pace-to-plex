@@ -225,7 +225,7 @@ def main():
 
         #create some shorter file names for printing purposes        
         short_file = relpath(file,args["directory"])
-        short_new_episode_path = join(subdir,short_file)
+        short_new_episode_path = join(subdir,episode_name)
 
         if (full_path is None) or (full_path == ""):
             raise ValueError("Unable to create full path for episode {} in arc {}".format(episode_name, new_episode_name[0]))
