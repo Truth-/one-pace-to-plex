@@ -1,4 +1,4 @@
-from os import listdir, rename, getcwd, walk, link
+from os import listdir, rename, getcwd, walk, link, mkdir, chown
 from os.path import isfile, join, abspath, basename, relpath, isdir
 import sys
 import re
@@ -206,7 +206,6 @@ def main():
             print(e)
             continue
         
-
         full_path = None
         arc_name = "- " + new_episode_name[0]
         episode_name = new_episode_name[1]
