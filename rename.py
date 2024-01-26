@@ -201,14 +201,10 @@ def main():
     for file in video_files:
         try:
             new_episode_name = generate_new_name_for_episode(basename(file))
-            new_episode_path = join(dirname(file),new_episode_name[1])
         except ValueError as e:
             print(e)
             continue
         
-        #create some shorter file names for printing purposes        
-        short_file = relpath(file,args["directory"])
-        short_new_episode_path = relpath(new_episode_path,args["directory"])
 
         full_path = None
         arc_name = "- " + new_episode_name[0]
@@ -226,6 +222,10 @@ def main():
             if arc_name in subdir:
                 full_path = join(args["target_dir"], subdir, new_episode_name[1])
                 break
+
+        #create some shorter file names for printing purposes        
+        short_file = relpath(file,args["directory"])
+        short_new_episode_path = relpath(subdir,args["directory"])
 
         if (full_path is None) or (full_path == ""):
             raise ValueError("Unable to create full path for episode {} in arc {}".format(episode_name, new_episode_name[0]))
