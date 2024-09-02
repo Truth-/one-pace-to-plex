@@ -115,6 +115,9 @@ def generate_new_name_for_episode(original_file_name):
         resolution = reg.group(2)
         
         coverpage = coverpage_mapping.get(episode_name)
+
+        if (coverpage is None):
+            raise ValueError("\"{}\" Episode name not found in file {}".format(episode_name, coverpage_ref_file))
         
         arc_name = coverpage.get("Arc")
         arc_ep_num = coverpage.get("Episodes")
