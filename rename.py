@@ -120,7 +120,7 @@ def generate_new_name_for_episode(original_file_name):
         if ((episode_number is None) or (episode_number == "")):
             raise ValueError("Episode {} not found in \"{}\" Arc in file {}".format(arc_ep_num, arc_name, episodes_ref_file))
 
-        return [arc_name, "One.Piece.{}.{}.{}-Extended.{}.mkv".format(episode_number, resolution, arc_name, arc_ep_num)]
+        return [arc_name, "One.Piece.{}.{}.{}Extended.{}.mkv".format(episode_number, resolution, arc_name, arc_ep_num)]
     
     reg = re.search(r'\[One Pace\]\[.*\] (.*?) \[(\d+p)\].*\.mkv', original_file_name)
     if (reg is not None):
