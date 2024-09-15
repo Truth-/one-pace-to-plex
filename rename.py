@@ -71,7 +71,6 @@ def list_mkv_files_in_directory(directory):
 # It returns the new name the file should have
 def generate_new_name_for_episode(original_file_name):
     reg = re.search(r'\[One Pace\]\[.*\] (.*?) (\d\d?) \[(\d+p)\].*\.mkv', original_file_name)
-
     if (reg is not None):
         arc_name = reg.group(1)
         arc_ep_num = reg.group(2)
@@ -88,7 +87,6 @@ def generate_new_name_for_episode(original_file_name):
         return [arc_name, "One.Piece.{}.{}.{}.{}.mkv".format(episode_number, resolution, arc_name, arc_ep_num)]
 
     reg = re.search(r'\[One Pace\]\ Chapter\ (\d+-\d+) \[(\d+p)\].*\.mkv', original_file_name)
-
     if (reg is not None):
         arc_name = "Dressrosa"
         chapters = reg.group(1)
@@ -108,8 +106,23 @@ def generate_new_name_for_episode(original_file_name):
 
         return ["Dressrosa", "One.Piece.{}.{}.{}.{}.mkv".format(episode_number, resolution, arc_name, arc_ep_num)]
     
-    reg = re.search(r'\[One Pace\]\[.*\] (.*?) \[(\d+p)\].*\.mkv', original_file_name)
+    reg = re.search(r'\[One Pace\]\[.*\] (.*?) (\d\d?) Extended \[(\d+p)\].*\.mkv', original_file_name)
+    if (reg is not None):
+        arc_name = reg.group(1)
+        arc_ep_num = reg.group(2)
+        resolution = reg.group(3)
 
+        arc = episode_mapping.get(arc_name)
+        if (arc is None):
+            raise ValueError("\"{}\" Arc not found in file {}".format(arc_name, episodes_ref_file))
+
+        episode_number = arc.get(arc_ep_num)
+        if ((episode_number is None) or (episode_number == "")):
+            raise ValueError("Episode {} not found in \"{}\" Arc in file {}".format(arc_ep_num, arc_name, episodes_ref_file))
+
+        return [arc_name, "One.Piece.{}.{}.{}-Extended.{}.mkv".format(episode_number, resolution, arc_name, arc_ep_num)]
+    
+    reg = re.search(r'\[One Pace\]\[.*\] (.*?) \[(\d+p)\].*\.mkv', original_file_name)
     if (reg is not None):
         episode_name = reg.group(1)
         resolution = reg.group(2)
